@@ -1,34 +1,32 @@
-const productContainer = document.getElementById('product-container');
-const productImages = document.getElementById('product-images');
+const productImage = document.getElementById('productImage');
+let currentImageIndex = 1;
+const totalImages = 3; // Adjust this based on the total number of images
 
-let isDragging = false;
-let startPointX;
-let currentImageIndex = 0;
+productImage.addEventListener('mousedown', (e) => {
+  e.preventDefault();
+  productImage.style.cursor = 'grabbing';
 
-productContainer.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    startPointX = e.clientX;
-});
+  const start = e.clientX;
 
-document.addEventListener('mouseup', () => {
-    isDragging = false;
-});
+  const moveHandler = (e) => {
+    const difference = start - e.clientX;
+    const rotatePercentage = (difference / productImage.clientWidth) * 100;
 
-document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
+    const nextImageIndex = (currentImageIndex + Math.round(rotatePercentage / (100 / totalImages))) % totalImages;
+    productImage.src = `images/kymco-${nextImageIndex + 1}.png`; // Adjust the filename pattern
 
-    const moveX = e.clientX - startPointX;
-    const percentageMoved = moveX / productContainer.offsetWidth;
+    start = e.clientX;
+  };
 
-    currentImageIndex -= Math.round(percentageMoved);
+  const upHandler = () => {
+    document.removeEventListener('mousemove', moveHandler);
+    document.removeEventListener('mouseup', upHandler);
 
-    if (currentImageIndex < 0) {
-        currentImageIndex = 0;
-    } else if (currentImageIndex >= productImages.children.length) {
-        currentImageIndex = productImages.children.length - 1;
-    }
+    productImage.style.cursor = 'grab';
 
-    productImages.style.transform = `translateX(-${currentImageIndex * 100}%)`;
+    currentImageIndex = (currentImageIndex + Math.round((start - e.clientX) / (productImage.clientWidth / totalImages))) % totalImages;
+  };
 
-    startPointX = e.clientX;
+  document.addEventListener('mousemove', moveHandler);
+  document.addEventListener('mouseup', upHandler);
 });
