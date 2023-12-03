@@ -1,6 +1,6 @@
 const productImage = document.getElementById('productImage');
 let currentImageIndex = 1;
-const totalImages = 3; // Adjust this based on the total number of images
+const totalImages = 34; // Adjust this based on the total number of images
 
 productImage.addEventListener('mousedown', (e) => {
   e.preventDefault();
